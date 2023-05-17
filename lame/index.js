@@ -21,15 +21,6 @@ const validBitrates = {
   320: true,
 };
 
-const defaultOpts = {
-  bitrate: 256,
-  vbr: true,
-  'vbr-quality': 0,
-  'crc-error-protection': true,
-  bitwidth: 16,
-};
-
-// eslint-disable-next-line no-unused-vars
 const emptyMeta = {
   title: '',
   artist: '',
@@ -40,23 +31,33 @@ const emptyMeta = {
   genre: '',
 };
 
-async function encode(file, outputFilepath, opts = defaultOpts, meta = null) {
+const defaultOpts = {
+  bitrate: 256,
+  vbr: true,
+  'vbr-quality': 0,
+  'crc-error-protection': true,
+  bitwidth: 16,
+  meta: emptyMeta
+};
+
+async function encode(file, outputFilepath, opts = defaultOpts) {
   const encoder = new Lame({
     ...defaultOpts,
     ...opts,
     bitrate: opts.bitrate && validBitrates[opts.bitrate] ? opts.bitrate : defaultOpts.bitrate,
     output: outputFilepath,
-    meta
   }).setFile(file);
 
   try {
-    await encoder.encode();
-    console.log('Encoding successful!');
-    console.log(`MP3 outputed to ${outputFilepath}`);
-    process.exit(1);
+    const result = await encoder.encode();
+    return result;
+    // console.log('Encoding successful!');
+    // console.log(`MP3 outputed to ${outputFilepath}`);
+    // process.exit(1);
   } catch (error) {
     console.error(error.message);
-    process.exit(0);
+    return false;
+    // process.exit(0);
   }
 }
 
