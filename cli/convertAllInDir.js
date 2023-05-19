@@ -15,7 +15,7 @@ async function convertAllInDir(argv) {
   }
 
   await Promise.all(wavs.map(async (filepath) => {
-    await convertFile(filepath);
+    await convertFile(filepath, argv);
   }));
   return 1;
 }
